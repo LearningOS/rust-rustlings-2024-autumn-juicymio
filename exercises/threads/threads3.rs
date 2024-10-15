@@ -5,6 +5,7 @@
 
 // I AM NOT DONE
 
+use core::borrow;
 use std::sync::mpsc;
 use std::sync::Arc;
 use std::thread;
@@ -30,11 +31,12 @@ fn send_tx(q: Queue, tx: mpsc::Sender<u32>) -> () {
     let qc = Arc::new(q);
     let qc1 = Arc::clone(&qc);
     let qc2 = Arc::clone(&qc);
+    let tx2 = tx.clone();
 
     thread::spawn(move || {
         for val in &qc1.first_half {
             println!("sending {:?}", val);
-            tx.send(*val).unwrap();
+            tx2.send(*val).unwrap();
             thread::sleep(Duration::from_secs(1));
         }
     });
